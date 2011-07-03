@@ -38,6 +38,7 @@ def scrape(url, directory):
     print("Done!")
     print("Scraping RSS feed...")
     links = getlinks(rss)
+    links.sort()
     print("Done!")
     
     files = []
