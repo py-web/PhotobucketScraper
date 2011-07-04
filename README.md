@@ -8,11 +8,11 @@ Usage
         python main.py action options
 
     Actions:
-        --scrape url
+            --scrape url outfile
             Scrapes an ImageShack RSS feed for image URLs and outputs file with list
-            --download list
+            --download list outdir
             Downloads images from URLs in list file and names them according to list
-            --makepdf directory
+            --makepdf directory outfile
             Makes PDF from images in directory
         
         Options:
@@ -21,7 +21,7 @@ Usage
             -r
             Reverses list
             -l
-            Makes landscape PDF
+            Makes landscape PDF when making PDF
 
 License
 =======
