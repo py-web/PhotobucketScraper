@@ -38,11 +38,13 @@ def scrape(url):
 def downloadall(links):
     mkdir("out")
     print("Created directory \"out\"")
-    for i in links:
+    for n, i in enumerate(links):
         print("Downloading %s..." % i)
         data = download(i).read()
         print("Writing %s to file..." % i)
-        fname = path.join("out", path.split(urlparse(i).path)[1])
+        fname = path.split(urlparse(i).path)[1]
+        fname = ("%03d" % n) + path.splitext(fname)[1]
+        fname = path.join("out", fname)
         with open(fname, "wb") as fp:
             fp.write(data)
         print("Done!")
@@ -80,7 +82,7 @@ Actions:
         -r
         Reverses list
         -l
-        Makes landscape PDF""")
+        Makes landscape PDF when making PDF""")
     
 if len(argv) > 1:
     if argv[1] == "--scrape":
