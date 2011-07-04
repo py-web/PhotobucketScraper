@@ -1,5 +1,27 @@
-A purpose-built tool to make a task for a friend quicker and easier. It takes an RSS feed for a photobucket album, downloads every image in it in order, then compiles them into a PDF.
+A purpose-built tool to make a task for a friend quicker and easier. It provides 3 functions: Extracting URLs from a Photobucket RSS feed, downloading every image in a list, and generating a PDF from a directory of images.
 It requires Python (tested on 2.7, probably works on 2.6 and earlier too), and [ReportLab Toolkit](http://www.reportlab.com/software/opensource/rl-toolkit/download/) to generate PDFs.
+
+Usage
+=====
+
+    Usage:
+        python main.py action options
+
+    Actions:
+        --scrape url
+            Scrapes an ImageShack RSS feed for image URLs and outputs file with list
+            --download list
+            Downloads images from URLs in list file and names them according to list
+            --makepdf directory
+            Makes PDF from images in directory
+        
+        Options:
+            -s
+            Sorts list
+            -r
+            Reverses list
+            -l
+            Makes landscape PDF
 
 License
 =======

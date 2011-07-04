@@ -2,10 +2,11 @@
 
 from xml.etree import ElementTree
 from urllib2 import urlopen
-from os import mkdir, path
+from os import mkdir, path, listdir
 from reportlab.pdfgen.canvas import Canvas
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A4, portrait, landscape
 from sys import argv
+from urlparse import urlparse
 
 def getlinks(fp):
     links = []
@@ -15,64 +16,93 @@ def getlinks(fp):
     for channel in root:
         for item in channel:
             if item.tag == "item":
-                itemname = None
-                itemurl = None
                 for itempart in item:
                     if itempart.tag == "enclosure":
-                        itemurl = itempart.attrib["url"]
-                    elif itempart.tag == "title":
-                        itemname = itempart.text
-                if itemname and itemurl:
-                    links.append((itemname, itemurl))
+                        links.append(itempart.attrib["url"])
+                        break
                     
     return links
     
 def download(url):
     return urlopen(url)
 
-def scrape(url, directory):
-    mkdir(directory)
-    print("Created directory (%s)" % directory)
+def scrape(url):
     print("Downloading RSS feed...")
     rss = download(url)
     print("Done!")
     print("Scraping RSS feed...")
     links = getlinks(rss)
-    links.sort()
     print("Done!")
+    return links
     
-    files = []
+def downloadall(links):
+    mkdir("out")
+    print("Created directory \"out\"")
     for i in links:
-        print("Downloading %s from %s..." % i)
-        data = download(i[1]).read()
-        print("Writing %s to file..." % i[0])
-        fname = path.join(directory, i[0])
-        files.append(fname)
+        print("Downloading %s..." % i)
+        data = download(i).read()
+        print("Writing %s to file..." % i)
+        fname = path.join("out", path.split(urlparse(i).path)[1])
         with open(fname, "wb") as fp:
             fp.write(data)
         print("Done!")
-    print("Scraping done!")
     
-    return files
-    
-def pdf(url, name):
-    files = scrape(url, name)
+def pdf(files, portrait=True):
     print("Creating PDF...")
-    pdf = Canvas("%s.pdf" % name)
+    pdf = Canvas("out.pdf")
+    pagesize = portrait(A4) if portrait else landscape(A4)
     for i in files:
         print("Creating PDF page for %s..." % i)
-        pdf.drawImage(i, 0, 0, *A4)
+        pdf.setPageSize(pagesize)
+        pdf.drawImage(i, 0, 0, *pagesize)
         pdf.showPage()
         print("Done!")
     print("Saving PDF...")
     pdf.save()
     print("Done!")
     
-if len(argv) == 3:
-    pdf(argv[1], argv[2])
+def usage():
+    print("""
+Usage:
+    python main.py action options
+
+Actions:
+    --scrape url
+        Scrapes an ImageShack RSS feed for image URLs and outputs file with list
+        --download list
+        Downloads images from URLs in list file and names them according to list
+        --makepdf directory
+        Makes PDF from images in directory
+    
+    Options:
+        -s
+        Sorts list
+        -r
+        Reverses list
+        -l
+        Makes landscape PDF""")
+    
+if len(argv) > 1:
+    if argv[1] == "--scrape":
+        result = scrape(argv[2])
+        if "-s" in argv: result.sort()
+        if "-r" in argv: result = result[::-1]
+        with open("out", "w") as fp:
+            for i in result:
+                fp.write(i+"\n")
+    elif argv[1] == "--download":
+        with open(argv[2], "r") as fp:
+            urls = fp.readlines()
+        urls = [i.rstrip("\n") for i in urls]
+        if "-s" in argv: urls.sort()
+        if "-r" in argv: urls = urls[::-1]
+        downloadall(urls)
+    elif argv[1] == "--makepdf":
+        files = [path.join(argv[2], i) for i in listdir(argv[2])]
+        if "-s" in argv: files.sort()
+        if "-r" in argv: files = urls[::-1]
+        pdf(files, "-l" not in argv)
+    else:
+        usage()
 else:
-    print("Usage:")
-    print("    python main.py rssurl name")
-    print("Produces a folder containing images and a pdf of that name containing all images.")
-    print()
-    print("E.g. python main.py http://feedmg.photobucket.com/albums/v653/Rougey2/WITCH%20issue%203/feed.rss issue3")
+    usage()
