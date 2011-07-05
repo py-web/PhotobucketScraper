@@ -8,20 +8,20 @@ Usage
         python main.py action options
 
     Actions:
-            --scrape url outfile
-            Scrapes an ImageShack RSS feed for image URLs and outputs file with list
-            --download list outdir
-            Downloads images from URLs in list file and names them according to list
-            --makepdf directory outfile
-            Makes PDF from images in directory
+        --scrape url outfile
+        Scrapes an ImageShack RSS feed for image URLs and outputs file with list
+        --download list outdir
+        Downloads images from URLs in list file and names them according to list
+        --makepdf directory outfile
+        Makes PDF from images in directory
         
-        Options:
-            -s
-            Sorts list
-            -r
-            Reverses list
-            -l
-            Makes landscape PDF when making PDF
+    Options:
+        -s
+        Sorts list
+        -r
+        Reverses list
+        -l
+        Makes landscape PDF when making PDF
 
 License
 =======
