@@ -9,7 +9,7 @@ Usage
 
     Actions:
         --scrape url outfile
-        Scrapes an ImageShack RSS feed for image URLs and outputs file with list
+        Scrapes an PhotoBucket RSS feed for image URLs and outputs file with list
         --download list outdir
         Downloads images from URLs in list file and names them according to list
         --makepdf directory outfile
